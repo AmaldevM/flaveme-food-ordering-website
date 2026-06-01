@@ -1,19 +1,17 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 
 const AuthUser = () => {
-    const {isUserExist} = useSelector((state) => state.user) // Redux state managemnt fuction
-    console.log(isUserExist)
-    const navigate = useNavigate() // navigation function from react router
+    const navigate = useNavigate()
+    const token = localStorage.getItem("token") || localStorage.getItem("authToken")
 
-    if (!isUserExist) {
-        navigate('/login-page')
-    }
+    useEffect(() => {
+        if (!token) {
+            navigate('/login')
+        }
+    }, [token, navigate])
 
-  return (
-    isUserExist ? <Outlet/> : null
-  )
+    return token ? <Outlet /> : null
 }
 
 export default AuthUser

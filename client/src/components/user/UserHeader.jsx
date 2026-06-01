@@ -1,135 +1,191 @@
-import React from "react";
-import { cn } from "../../lib/utils.js";
-import { useMediaQuery } from "../../lib/use-media-query.js";
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { FaUserCircle, FaShoppingCart, FaHeart } from "react-icons/fa";
+import React, { useState } from "react";
+import { Menu, X, ShoppingCart, Heart, LogOut, User as UserIcon } from "lucide-react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+import { axiosInstance } from "../../config/axiosInstance";
+import toast from "react-hot-toast";
 
 export const UserHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const userId = localStorage.getItem("userId") || "";
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post("/user/logout");
+      toast.success("Logged out successfully");
+      localStorage.clear();
+      navigate("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Failed to log out. Cleaning up local session...");
+      localStorage.clear();
+      navigate("/");
+    }
+  };
+
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "Restaurant", path: "/rest" },
+    { name: "Contact Us", path: "/contactus" }
+  ];
 
   return (
-    <header className="bg-white/0 font-montserrat  font-bold text-orange-600 backdrop-blur-sm shadow-md  top-1 z-60 py-3 rounded-3xl">
-      <div className="container mx-auto px-4 flex items-center justify-between h-16  ">
-        {/* Logo */}
-        <Link to="/">
-          <img
-            src={logo}
-            alt="logo"
-            className=" py-3 sm:py-4 w-[82px] md:w-[100px] transition-transform duration-200 ease-in-out hover:scale-[1.15] "
-          />
-        </Link>
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
-          <Link to="/">
-            <button className="text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 dark:after:bg-white  after:bg-neutral-800 after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 transition-transform duration-200 ease-in-out hover:scale-[1.15]">
-              Home
+    <div className="fixed top-4 left-0 right-0 z-50 px-4 select-none">
+      <header className="mx-auto max-w-5xl bg-white/15 dark:bg-black/35 backdrop-blur-xl border border-white/20 dark:border-gray-800/40 shadow-xl rounded-full py-1.5 px-6 text-[var(--text-primary)] transition-all duration-300">
+        <div className="flex items-center justify-between h-14">
+          
+          {/* Logo */}
+          <Link to="/" className="flex items-center">
+            <img
+              src={logo}
+              alt="Flave Me logo"
+              className="w-[90px] md:w-[105px] transition-transform duration-300 ease-in-out hover:scale-[1.08]"
+            />
+          </Link>
+
+          {/* Desktop Navigation with sliding active pills */}
+          <nav className="hidden md:flex items-center space-x-1.5 font-bold text-sm">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.path;
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`relative px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center group overflow-hidden ${
+                    isActive
+                      ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md shadow-orange-500/20"
+                      : "text-gray-700 dark:text-gray-200 hover:bg-white/10 dark:hover:bg-white/5 hover:text-amber-500 dark:hover:text-amber-400"
+                  }`}
+                >
+                  <span className="relative z-10 transition-transform duration-200 group-hover:scale-105">
+                    {link.name}
+                  </span>
+                  {/* Subtle slider highlight line */}
+                  {!isActive && (
+                    <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-amber-500 dark:bg-amber-400 rounded-full transition-all duration-300 group-hover:w-1/2"></span>
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Icons & Avatar Dropdown Area */}
+          <div className="hidden md:flex items-center space-x-2.5">
+            <Link
+              to="/user/wishlist"
+              className={`p-2.5 rounded-full transition-all duration-300 hover:bg-white/10 dark:hover:bg-white/5 hover:rotate-[8deg] active:scale-95 ${
+                location.pathname === "/user/wishlist"
+                  ? "text-red-500 bg-white/10 dark:bg-white/5"
+                  : "text-gray-700 dark:text-gray-200 hover:text-red-500"
+              }`}
+              title="Wishlist"
+            >
+              <Heart className="w-5 h-5" />
+            </Link>
+            
+            <Link
+              to="/cart"
+              className={`p-2.5 rounded-full transition-all duration-300 hover:bg-white/10 dark:hover:bg-white/5 hover:rotate-[8deg] active:scale-95 ${
+                location.pathname === "/cart"
+                  ? "text-amber-500 bg-white/10 dark:bg-white/5"
+                  : "text-gray-700 dark:text-gray-200 hover:text-amber-500"
+              }`}
+              title="Cart"
+            >
+              <ShoppingCart className="w-5 h-5" />
+            </Link>
+            
+            <ThemeToggle />
+            
+            <Link to={`/user/profile/${userId}`} title="Profile">
+              <Avatar className="border border-white/20 dark:border-gray-800 cursor-pointer w-9 h-9 transition-transform duration-300 hover:scale-110 hover:border-amber-500">
+                <AvatarImage src="https://github.com/shadcn.png" alt="Profile" />
+                <AvatarFallback><UserIcon className="w-4 h-4" /></AvatarFallback>
+              </Avatar>
+            </Link>
+
+            <button
+              onClick={handleLogout}
+              className="p-2.5 rounded-full text-gray-700 dark:text-gray-200 hover:bg-white/10 dark:hover:bg-white/5 hover:text-red-500 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer focus:outline-none"
+              title="Logout"
+            >
+              <LogOut className="w-5 h-5" />
             </button>
-          </Link>
-          <Link to="/restaurant">
-            <button className="text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 dark:after:bg-white  after:bg-neutral-800 after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 transition-transform duration-200 ease-in-out hover:scale-[1.15]">
-              Restaurant
+          </div>
+
+          {/* Mobile Menu Toggles */}
+          <div className="md:hidden flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              className="p-2 text-gray-700 dark:text-gray-200 hover:bg-white/10 dark:hover:bg-white/5 rounded-full transition-colors cursor-pointer"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
-          </Link>
-          <Link to="/contact-us">
-            <button className="text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 dark:after:bg-white  after:bg-neutral-800 after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 transition-transform duration-200 ease-in-out hover:scale-[1.15]">
-              Contact Us
-            </button>
-          </Link>
-        </nav>
-        {/* Icons */}
-        <div className="hidden md:flex items-center space-x-4">
-          <Link
-            to="/wishlist"
-            className="text-white hover:text-red-500 transition-transform duration-200 ease-in-out hover:scale-[1.15]"
-          >
-            <FaHeart className="text-xl" />
-          </Link>
-          <Link
-            to="/cart"
-            className="text-white hover:text-blue-400 transition-transform duration-200 ease-in-out hover:scale-[1.15]"
-          >
-            <FaShoppingCart className="text-xl" />
-          </Link>
-          <ThemeToggle />
-          <Link to="/profile">
-            <Avatar>
-              <AvatarImage
-                src="https://github.com/shadcn.png"
-                alt="@shadcn"
-                className="transition-transform duration-200 ease-in-out hover:scale-[1.05]"
-              />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-          </Link>
+          </div>
         </div>
 
-        {/* Mobile Menu Toggle */}
-        <button
-          className="md:hidden text-white"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"}
-            />
-          </svg>
-        </button>
-      </div>
-
-      {/* Mobile Navigation */}
-      {isMenuOpen && (
-        <nav className="md:hidden bg-white/0 backdrop-blur-sm border-t ">
-          <Link
-            to="/"
-            className="block py-2 px-4 text-stone-700 hover:text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 dark:after:bg-white  after:bg-neutral-800 after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 transition-transform duration-200 ease-in-out hover:scale-[1.03]"
-          >
-            Home
-          </Link>
-          <Link
-            to="/restaurant"
-            className="block py-2 px-4 text-stone-700 hover:text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 dark:after:bg-white  after:bg-neutral-800 after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 transition-transform duration-200 ease-in-out hover:scale-[1.03]"
-          >
-            Restaurant
-          </Link>
-          <Link
-            to="/contactus"
-            className="block py-2 px-4 text-stone-700 hover:text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 dark:after:bg-white  after:bg-neutral-800 after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 transition-transform duration-200 ease-in-out hover:scale-[1.03]"
-          >
-            Contact Us
-          </Link>
-          <Link
-            to="/wishlist"
-            className="block py-2 px-4 text-stone-700 hover:text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 dark:after:bg-white  after:bg-neutral-800 after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 transition-transform duration-200 ease-in-out hover:scale-[1.03]"
-          >
-            Wishlist
-          </Link>
-          <Link
-            to="/cart"
-            className="block py-2 px-4 text-stone-700 hover:text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 dark:after:bg-white  after:bg-neutral-800 after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 transition-transform duration-200 ease-in-out hover:scale-[1.03]"
-          >
-            Cart
-          </Link>
-          <Link
-            to="/profile"
-            className="block py-2 px-4 text-stone-700 hover:text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 dark:after:bg-white  after:bg-neutral-800 after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 transition-transform duration-200 ease-in-out hover:scale-[1.03]"
-          >
-            Profile
-          </Link>
-        </nav>
-      )}
-    </header>
+        {/* Mobile Navigation Drawer */}
+        {isMenuOpen && (
+          <nav className="md:hidden border-t border-white/10 dark:border-gray-800/40 mt-3 pt-4 pb-2 flex flex-col space-y-2 text-sm font-bold">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.path;
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`block py-2.5 px-4 rounded-xl transition-all ${
+                    isActive
+                      ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md"
+                      : "text-gray-700 dark:text-gray-200 hover:bg-white/10 hover:text-amber-500"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+            <Link
+              to="/user/wishlist"
+              onClick={() => setIsMenuOpen(false)}
+              className="py-2.5 px-4 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-white/10 hover:text-red-500 flex items-center gap-2 transition-all"
+            >
+              <Heart className="w-5 h-5" />
+              Wishlist
+            </Link>
+            <Link
+              to="/cart"
+              onClick={() => setIsMenuOpen(false)}
+              className="py-2.5 px-4 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-white/10 hover:text-amber-500 flex items-center gap-2 transition-all"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              Cart
+            </Link>
+            <Link
+              to={`/user/profile/${userId}`}
+              onClick={() => setIsMenuOpen(false)}
+              className="py-2.5 px-4 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-white/10 hover:text-amber-500 flex items-center gap-2 transition-all"
+            >
+              <UserIcon className="w-5 h-5" />
+              Profile
+            </Link>
+            <button
+              onClick={() => {
+                setIsMenuOpen(false);
+                handleLogout();
+              }}
+              className="w-full text-left text-red-500 hover:text-red-600 py-2.5 px-4 flex items-center gap-2 font-bold transition-all cursor-pointer"
+            >
+              <LogOut className="w-5 h-5" />
+              Logout
+            </button>
+          </nav>
+        )}
+      </header>
+    </div>
   );
 };

@@ -1,21 +1,27 @@
 import React from "react";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes/routes.jsx";
-import bgImage from "./assets/5.jpg";
 import LoadingScreen from "./components/ui/LoadingScreen";
+import { Toaster } from "react-hot-toast";
 
-const bgStyle = {
-  backgroundImage: `url(${bgImage})`,
-  minHeight: "100vh",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-};
+import { InteractiveBackground } from "./components/ui/InteractiveBackground";
 
 function App() {
   return (
-    <div style={bgStyle} className="overflow-x-hidden">
-      <div className="min-h-screen bg-white/10 backdrop-blur-3xl">
+    <div className="min-h-screen bg-gradient-to-br from-[var(--bg-from)] to-[var(--bg-to)] text-[var(--text-primary)] transition-colors duration-500 overflow-x-hidden relative">
+      {/* Dynamic Animated Vector Drones & Interactive Ambient Mesh Gradient Background */}
+      <InteractiveBackground />
+      
+      <div className="min-h-screen relative z-10">
         <React.Suspense fallback={<LoadingScreen />}>
+          <Toaster 
+            position="top-center" 
+            reverseOrder={false}
+            toastOptions={{
+              className: 'glass-panel text-[var(--text-primary)] rounded-xl border border-white/20 dark:border-gray-800/40',
+              duration: 3500,
+            }}
+          />
           <RouterProvider router={router} />
         </React.Suspense>
       </div>
