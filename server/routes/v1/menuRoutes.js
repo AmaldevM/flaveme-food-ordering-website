@@ -8,9 +8,13 @@ const {
   updateMenu,
   deleteMenu,
   getMenubyRestaurantid,
+  getAllMenuItems
 } = require("../../controllers/menuController");
 
 const router = express.Router();
+
+// Get all menus globally
+router.get("/all", getAllMenuItems);
 
 // Create menu
 router.post("/create-menu", upload.single("image"), createMenuItem);
@@ -23,7 +27,7 @@ router.get("/menu/:restaurantId/search", searchMenuByName);
 // Filter menu by price
 router.get("/menu/:restaurantId/filter/price", filterMenusByPrice);
 // Update menu 
-router.put("/update-menu/:menuId", updateMenu);
+router.put("/update-menu/:menuId", upload.single("image"), updateMenu);
 // delete menu
 router.delete("/remove-menu/:menuId", deleteMenu);
 

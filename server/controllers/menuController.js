@@ -1,6 +1,7 @@
 const { cloudinaryInstance } = require("../config/cloudinary");
 const { Menu } = require("../models/menuModel");
 const { Order } = require("../models/orderModel");
+const { Restaurant } = require("../models/restModel");
 
 // Create a menu
 const createMenuItem = async (req, res) => {
@@ -165,10 +166,26 @@ const filterMenusByPrice = async (req, res) => {
 const updateMenu = async (req, res) => {
   try {
     const { menuId } = req.params; 
-    const updates = req.body; 
+    const updates = { ...req.body }; 
+
+    // Upload new image to Cloudinary if provided
+    if (req.file) {
+      try {
+        const uploadResult = await cloudinaryInstance.uploader.upload(
+          req.file.path
+        );
+        updates.image = uploadResult.secure_url;
+      } catch (error) {
+        return res.status(500).json({
+          success: false,
+          message: "Image upload failed",
+          error: error.message,
+        });
+      }
+    }
 
     // Validate that the updates object is not empty
-    if (!updates || Object.keys(updates).length === 0) {
+    if (Object.keys(updates).length === 0) {
       return res.status(400).json({
         success: false,
         message: "No updates provided",
@@ -294,8 +311,22 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-module.exports = { updateOrderStatus };
-
+const getAllMenuItems = async (req, res) => {
+  try {
+    const menus = await Menu.find({}).populate("restaurantId");
+    res.status(200).json({
+      success: true,
+      message: "All menu items fetched successfully",
+      data: menus,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   createMenuItem,
@@ -305,5 +336,6 @@ module.exports = {
   filterMenusByPrice,
   updateMenu,
   deleteMenu,
-  updateOrderStatus
+  updateOrderStatus,
+  getAllMenuItems
 };

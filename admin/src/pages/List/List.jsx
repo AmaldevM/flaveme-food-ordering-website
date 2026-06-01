@@ -7,6 +7,16 @@ const List = ({ url }) => {
   const [restaurants, setRestaurants] = useState([]);
   const [selectedRestId, setSelectedRestId] = useState("");
   const [list, setList] = useState([]);
+  
+  // Edit modal states
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentItem, setCurrentItem] = useState(null);
+  const [editName, setEditName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editPrice, setEditPrice] = useState("");
+  const [editCategory, setEditCategory] = useState("Burgers");
+  const [editImage, setEditImage] = useState(null);
+  const [editImagePreview, setEditImagePreview] = useState("");
 
   // Fetch all restaurants
   useEffect(() => {
@@ -70,6 +80,47 @@ const List = ({ url }) => {
     setSelectedRestId(e.target.value);
   };
 
+  const openEditModal = (item) => {
+    setCurrentItem(item);
+    setEditName(item.name);
+    setEditDescription(item.description || "");
+    setEditPrice(item.price);
+    setEditCategory(item.category || "Burgers");
+    setEditImage(null);
+    setEditImagePreview(item.image || "");
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateFood = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("name", editName);
+    formData.append("description", editDescription);
+    formData.append("price", Number(editPrice));
+    formData.append("category", editCategory);
+    if (editImage) {
+      formData.append("image", editImage);
+    }
+
+    try {
+      const response = await axios.put(`${url}/api/v1/menu/update-menu/${currentItem._id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      if (response.data.success) {
+        toast.success("Menu item updated successfully!");
+        setIsEditModalOpen(false);
+        fetchList(selectedRestId);
+      } else {
+        toast.error(response.data.message || "Failed to update item.");
+      }
+    } catch (error) {
+      console.error("Error updating menu item", error);
+      toast.error(error.response?.data?.message || "Failed to update menu item.");
+    }
+  };
+
   return (
     <div className='list flex-col'>
       <div className="list-header flex-col">
@@ -102,11 +153,87 @@ const List = ({ url }) => {
               <p>{item.name}</p>
               <p>{item.category}</p>
               <p>${item.price}</p>
-              <p onClick={() => removeFood(item._id)} className='cursor delete-btn'>X</p>
+              <div className="action-buttons flex gap-2">
+                <button onClick={() => openEditModal(item)} className='edit-btn cursor'>Edit</button>
+                <p onClick={() => removeFood(item._id)} className='cursor delete-btn'>X</p>
+              </div>
             </div>
           ))
         )}
       </div>
+
+      {/* Edit Modal Overlay */}
+      {isEditModalOpen && (
+        <div className="edit-modal-overlay">
+          <div className="edit-modal">
+            <div className="edit-modal-header">
+              <h3>Edit Menu Item</h3>
+              <button className="close-modal-btn" onClick={() => setIsEditModalOpen(false)}>✕</button>
+            </div>
+            <form onSubmit={handleUpdateFood} className="edit-modal-form">
+              <div className="form-group">
+                <label>Item Name</label>
+                <input 
+                  type="text" 
+                  value={editName} 
+                  onChange={(e) => setEditName(e.target.value)} 
+                  required 
+                  placeholder="Enter name"
+                />
+              </div>
+              <div className="form-group">
+                <label>Description</label>
+                <textarea 
+                  value={editDescription} 
+                  onChange={(e) => setEditDescription(e.target.value)} 
+                  rows="3" 
+                  placeholder="Enter description"
+                />
+              </div>
+              <div className="form-group">
+                <label>Price ($)</label>
+                <input 
+                  type="number" 
+                  value={editPrice} 
+                  onChange={(e) => setEditPrice(e.target.value)} 
+                  required 
+                  placeholder="Enter price"
+                />
+              </div>
+              <div className="form-group">
+                <label>Category</label>
+                <select value={editCategory} onChange={(e) => setEditCategory(e.target.value)}>
+                  <option value="Burgers">Burgers</option>
+                  <option value="Pizzas">Pizzas</option>
+                  <option value="Donuts">Donuts</option>
+                  <option value="Drinks">Drinks</option>
+                  <option value="Desserts">Desserts</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Upload New Image (Optional)</label>
+                <div className="image-upload-preview">
+                  {editImagePreview && (
+                    <img src={editImagePreview} alt="Preview" className="edit-preview-img" />
+                  )}
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setEditImage(file);
+                        setEditImagePreview(URL.createObjectURL(file));
+                      }
+                    }} 
+                  />
+                </div>
+              </div>
+              <button type="submit" className="submit-btn">Save Changes</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
