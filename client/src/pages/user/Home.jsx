@@ -156,11 +156,15 @@ export const Home = () => {
     }
 
     try {
-      const response = await axiosInstance.post("/cart/add", {
-        menuId: item._id,
-        price: item.price,
+      const response = await axiosInstance.post("/cart/addCart", {
+        items: [
+          {
+            menuItem: item._id,
+            quantity: 1,
+          }
+        ]
       });
-      if (response.data.success) {
+      if (response.status === 200) {
         toast.success(`${item.name} added to cart!`);
       } else {
         toast.error("Failed to add item to cart.");

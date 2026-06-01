@@ -112,12 +112,16 @@ export default function ARVisualizer() {
         return;
       }
 
-      const response = await axiosInstance.post("/cart/add", {
-        menuId: itemId.startsWith("dummy") ? "dummy1" : itemId,
-        price: itemDetails.price,
+      const response = await axiosInstance.post("/cart/addCart", {
+        items: [
+          {
+            menuItem: itemId.startsWith("dummy") ? "dummy1" : itemId,
+            quantity: 1,
+          }
+        ]
       });
 
-      if (response.data.success) {
+      if (response.status === 200) {
         toast.success(`${itemDetails.name} added to cart from AR view!`);
       } else {
         toast.error("Failed to add item to cart.");
