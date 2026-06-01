@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { FaUserCircle, FaShoppingCart, FaHeart } from "react-icons/fa";
 import logo from "../../assets/logo.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 export const UserHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -53,6 +54,7 @@ export const UserHeader = () => {
           >
             <FaShoppingCart className="text-xl" />
           </Link>
+          <ThemeToggle />
           <Link to="/profile">
             <Avatar>
               <AvatarImage

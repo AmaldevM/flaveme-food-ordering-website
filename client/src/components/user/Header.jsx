@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { FaShoppingCart, FaHeart } from "react-icons/fa";
 import logo from "../../assets/logo.png";
 import { Select, Option } from "@material-tailwind/react";
+import ThemeToggle from "../ui/ThemeToggle";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -65,6 +66,7 @@ function Header() {
           >
             <FaShoppingCart className="text-xl" />
           </Link>
+          <ThemeToggle />
           <Link to="/signin">
             <div className=" font-lato group relative cursor-pointer p-2 w-32 border bg-white rounded-full overflow-hidden text-black text-center font-semibold">
               <span className="translate-x-1 group-hover:translate-x-12 group-hover:opacity-0 transition-all duration-300 inline-block">
