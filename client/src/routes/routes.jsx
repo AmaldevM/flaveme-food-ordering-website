@@ -14,6 +14,7 @@ import RestDetails from "@/pages/user/loginUser/RestDetails.jsx";
 import ProfilePage from "@/pages/user/loginUser/ProfilePage.jsx";
 import Menus from "@/components/user/Menus.jsx";
 import { About } from "@/pages/user/About.jsx";
+import DroneTracking from "@/pages/user/loginUser/DroneTracking.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
           { path: "getCart", element: <Cart />, },
           { path: "wishlist", element: <Wishlist /> },
           { path: "review", element: <ReviewPage /> },
+          { path: "track-drone/:orderId", element: <DroneTracking /> },
         ],
       },
     ],

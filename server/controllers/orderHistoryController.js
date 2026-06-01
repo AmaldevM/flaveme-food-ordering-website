@@ -22,13 +22,16 @@ const getOrderHistory = async (req, res) => {
 const trackOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(orderId)
+      .populate("user", "-password")
+      .populate("items.menuItem")
+      .populate("items.restaurant");
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    res.status(200).json({ status: order.status });
+    res.status(200).json(order);
   } catch (error) {
     res
       .status(500)

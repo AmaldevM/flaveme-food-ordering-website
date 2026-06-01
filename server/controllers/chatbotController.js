@@ -63,7 +63,7 @@ const chatbotResponse = async (req, res) => {
       }[latestOrder.orderStatus] || latestOrder.orderStatus;
 
       return res.status(200).json({
-        reply: `Here is the status of your latest order:\n\n**Order ID:** ${latestOrder._id}\n**Placed On:** ${orderDate}\n**Items:** ${itemNames}\n**From:** ${restaurantName}\n**Total Amount:** ₹${latestOrder.totalAmount}\n**Status:** ${statusEmoji}\n\nCan I help you with anything else?`
+        reply: `Here is the status of your latest order:\n\n**Order ID:** ${latestOrder._id}\n**Placed On:** ${orderDate}\n**Items:** ${itemNames}\n**From:** ${restaurantName}\n**Total Amount:** ₹${latestOrder.totalAmount}\n**Status:** ${statusEmoji}\n\n🚁 **Watch Live Drone Tracking:** [Track Order Live](/user/track-drone/${latestOrder._id})\n\nCan I help you with anything else?`
       });
     }
 

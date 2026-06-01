@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send, Sparkles, User, Bot, HelpCircle } from "lucide-react";
 import { axiosInstance } from "../../config/axiosInstance";
+import { Link } from "react-router-dom";
 
 export default function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -79,33 +80,79 @@ export default function AIChatbot() {
     }
   };
 
-  // Helper to format replies (handles bold **text** and newlines)
-  const renderFormattedText = (text) => {
-    if (!text) return "";
-    
-    // Bold parsing
+  // Helper to format regular text (handles bold **text** and newlines)
+  const renderTextFormatting = (text, partIndex) => {
     let parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, index) => {
+      const key = `${partIndex}-${index}`;
       if (part.startsWith("**") && part.endsWith("**")) {
-        return <strong key={index} className="font-bold text-gray-900 dark:text-white">{part.slice(2, -2)}</strong>;
+        return (
+          <strong key={key} className="font-semibold text-yellow-300 dark:text-yellow-400">
+            {part.slice(2, -2)}
+          </strong>
+        );
       }
       
-      // Italics parsing
       let subParts = part.split(/(_.*?_)/g);
       return subParts.map((subPart, subIndex) => {
+        const subKey = `${key}-${subIndex}`;
         if (subPart.startsWith("_") && subPart.endsWith("_")) {
-          return <em key={`${index}-${subIndex}`} className="italic">{subPart.slice(1, -1)}</em>;
+          return <em key={subKey} className="italic">{subPart.slice(1, -1)}</em>;
         }
 
-        // Newline parsing
         let lines = subPart.split("\n");
         return lines.map((line, lineIndex) => (
-          <React.Fragment key={`${index}-${subIndex}-${lineIndex}`}>
+          <React.Fragment key={`${subKey}-${lineIndex}`}>
             {line}
             {lineIndex < lines.length - 1 && <br />}
           </React.Fragment>
         ));
       });
+    });
+  };
+
+  // Helper to format replies (handles links first, then bold/italics/newlines)
+  const renderFormattedText = (text) => {
+    if (!text) return "";
+    
+    const linkRegex = /\[(.*?)\]\((.*?)\)/g;
+    let parts = text.split(/(\[.*?\]\(.*?\))/g);
+    
+    return parts.map((part, index) => {
+      const match = linkRegex.exec(part);
+      linkRegex.lastIndex = 0; // Reset regex state
+      
+      if (match) {
+        const linkText = match[1];
+        const linkUrl = match[2];
+        
+        if (linkUrl.startsWith("/")) {
+          return (
+            <Link
+              key={index}
+              to={linkUrl}
+              onClick={() => setIsOpen(false)} // Close chatbot modal on redirect
+              className="underline text-yellow-300 font-bold hover:text-yellow-400 transition-colors"
+            >
+              {linkText}
+            </Link>
+          );
+        }
+        
+        return (
+          <a
+            key={index}
+            href={linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline text-yellow-300 font-bold hover:text-yellow-400 transition-colors"
+          >
+            {linkText}
+          </a>
+        );
+      }
+      
+      return renderTextFormatting(part, index);
     });
   };
 
