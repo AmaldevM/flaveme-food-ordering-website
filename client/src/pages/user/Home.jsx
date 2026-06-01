@@ -10,76 +10,95 @@ import food from "../../assets/icons/food2.png";
 import rest from "../../assets/icons/rest 2.png";
 
 export const Home = () => {
-  const [user, setUser] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  
   const handleSearch = (event) => {
     event.preventDefault();
-    console.log("Search Query:", user);
+    console.log("Search Query:", searchQuery);
   };
 
   return (
-    <div>
+    <div className="space-y-16 pb-20">
       {/* Hero Section */}
-      <main className="home  py-6 sm:py-10 md:py-14 lg:py-10 xl:py-6 custom-rounded min-h-screen">
-        <div className="px-4 mx-auto max-w-xs sm:max-w-md md:max-w-lg lg:max-w-4xl xl:max-w-6xl">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-8 lg:gap-x-10 lg:items-center ">
+      <main className="home py-10 sm:py-16 md:py-20 lg:py-12 custom-rounded min-h-screen flex items-center">
+        <div className="px-6 mx-auto max-w-screen-xl w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-12 lg:gap-x-12 items-center">
             {/* Text Section */}
-            <div className="text-center lg:text-left">
-              <h1 className="text-2xl leading-normal font-bold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
+            <div className="text-center lg:text-left space-y-8">
+              <h1 className="text-4xl leading-tight font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl font-montserrat">
                 Fastest Online{" "}
-                <span className="text-amber-400">Food Delivery Service.</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
+                  Food Delivery
+                </span>{" "}
+                Service.
               </h1>
+              <p className="text-lg text-gray-200 font-medium max-w-xl mx-auto lg:mx-0">
+                Order from your favorite restaurants and get hot, delicious food delivered to your doorstep in minutes.
+              </p>
+              
               {/* Search Form */}
-              <form className="mt-6 sm:mt-8" onSubmit={handleSearch}>
-                <div className="relative flex items-center p-2 sm:border sm:rounded-xl group sm:focus-within:ring-1 sm:focus-within:ring-black">
+              <form className="mt-8 max-w-lg mx-auto lg:mx-0" onSubmit={handleSearch}>
+                <div className="relative flex flex-col sm:flex-row items-center p-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl gap-3 sm:gap-0 shadow-lg focus-within:border-amber-400 transition-all duration-300">
                   <input
                     type="text"
-                    placeholder="Search Food or Restaurants"
-                    className="w-full px-4 py-3 text-gray-900 bg-transparent border border-black rounded-xl sm:border-none placeholder-black"
-                    value={user}
-                    onChange={(e) => setUser(e.target.value)}
+                    placeholder="Search food or partner restaurants..."
+                    className="w-full px-4 py-3.5 text-white bg-transparent border-none outline-none placeholder-gray-300 font-semibold text-base"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                   />
                   <button
                     type="submit"
-                    className="ml-3 px-6 py-3 text-base rounded-xl bg-amber-500 font-medium text-white shadow-lg transition-transform duration-200 ease-in-out hover:scale-[1.08]"
+                    className="w-full sm:w-auto px-8 py-3.5 text-base font-bold rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg active:scale-[0.97] transition-all duration-200"
                   >
-                    <h3>Search</h3>
+                    Search
                   </button>
                 </div>
               </form>
+
               {/* Stats */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-4 mt-5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6">
                 <Stats img={review} value="4.8/5" label="Customer Reviews" />
                 <Stats img={food} value="10K+" label="Delicious Foods Served" />
                 <Stats img={rest} value="500+" label="Partner Restaurants" />
               </div>
             </div>
+
             {/* Image Section */}
-            <div>
+            <div className="flex justify-center relative">
+              {/* Decorative background glow */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 sm:w-96 sm:h-96 bg-amber-500/20 rounded-full blur-3xl -z-10"></div>
               <img
-                className="object-cover object-center rounded-lg  h-100 w-100 md:h-200 md:w-100"
-                alt="hero"
+                className="object-contain max-h-[450px] sm:max-h-[550px] drop-shadow-[0_15px_30px_rgba(0,0,0,0.3)] transition-transform duration-500 hover:rotate-2 hover:scale-[1.02]"
+                alt="Flave Me Delivery"
                 src={logo}
               />
             </div>
           </div>
         </div>
       </main>
-      <main className="  py-6 sm:py-2 md:py-2 lg:py-12 xl:py-0  min-h-screen">
-        <div className="px-4 mx-auto max-w-xs sm:max-w-md md:max-w-lg lg:max-w-4xl xl:max-w-6xl">
-          <div className="text-center lg:text-left ">
-            <div className="lg:grid-cols-2 gap-y-8 lg:gap-x-10 lg:items-center ">
-         
-              <RestaurantPage />
-         
-              <HowDoesitWork />
-         
-              <Process />
-         
-            </div>
-          </div>
-        </div>
-            <Whychooseus />
-      </main>
+
+      {/* Main Core sections */}
+      <div className="px-6 mx-auto max-w-screen-xl space-y-20">
+        {/* Restaurants listing */}
+        <section id="restaurants">
+          <RestaurantPage />
+        </section>
+
+        {/* How Does It Work */}
+        <section id="how-it-works">
+          <HowDoesitWork />
+        </section>
+
+        {/* Simple Process */}
+        <section id="process">
+          <Process />
+        </section>
+
+        {/* Why Choose Us & Testimonials */}
+        <section id="why-us">
+          <Whychooseus />
+        </section>
+      </div>
     </div>
   );
 };
