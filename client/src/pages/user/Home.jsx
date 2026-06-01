@@ -4,6 +4,7 @@ import { HowDoesitWork } from "@/components/user/HowDoesitWork";
 import { Process } from "@/components/user/Process";
 import { Whychooseus } from "@/components/user/Whychooseus";
 import { RestaurantPage } from "./RestaurantPage";
+import { VirtualMenu } from "@/components/user/VirtualMenu";
 import Stats from "../../components/ui/Stats";
 import review from "../../assets/icons/review.png";
 import food from "../../assets/icons/food2.png";
@@ -92,6 +93,11 @@ export const Home = () => {
         {/* Simple Process */}
         <section id="process">
           <Process />
+        </section>
+
+        {/* Virtual 3D Menu */}
+        <section id="virtual-menu">
+          <VirtualMenu />
         </section>
 
         {/* Why Choose Us & Testimonials */}
