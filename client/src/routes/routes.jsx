@@ -29,6 +29,7 @@ export const router = createBrowserRouter([
       { path: "menu", element: <Menus /> },
       { path: "contactus", element: <Contactus /> },
       { path: "about", element: <About />},
+      { path: "cart", element: <Cart />},
       // Logged-in user
       {
         path: "user",
