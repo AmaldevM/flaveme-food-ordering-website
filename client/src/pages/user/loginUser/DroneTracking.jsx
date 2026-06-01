@@ -19,6 +19,7 @@ import {
   Sparkles
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { requestNotificationPermission, showBrowserNotification } from "../../../utils/pushNotifications";
 
 // Stylized 3D Low-Poly City Map Component
 function CityMap() {
@@ -241,6 +242,11 @@ export default function DroneTracking() {
   const navigate = useNavigate();
   
   const [order, setOrder] = useState(null);
+
+  // Request notification permission on mount
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0); // 0 to 1
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
@@ -299,6 +305,10 @@ export default function DroneTracking() {
             addLogMessage("Destination reached. Package released successfully.");
             addLogMessage("Mission complete. Heading back to base.");
             toast.success("Drone delivered your food!", { duration: 5000 });
+            showBrowserNotification("Flave Me Delivery", {
+              body: "Your food has been delivered successfully! Bon appétit! 🍕✨",
+              tag: "drone-delivery",
+            });
             return 1;
           }
           return nextVal;
@@ -327,18 +337,30 @@ export default function DroneTracking() {
 
     if (progress > 0.01 && progress < 0.05) {
       logStage(1, "Rotor ignition sequence verified. Takeoff authorized.");
+      showBrowserNotification("Flave Me Delivery", {
+        body: "Your delivery drone is warming up for takeoff! 🛫",
+        tag: "drone-delivery",
+      });
     }
     if (progress > 0.08 && progress < 0.15) {
       logStage(2, "Ascending to 90m cruising corridor. Wind drift: 3 km/h NW.");
     }
     if (progress > 0.3 && progress < 0.4) {
       logStage(3, "Heading locked. Cruising speed: 45 km/h. Power draw: nominal.");
+      showBrowserNotification("Flave Me Delivery", {
+        body: "Your delivery drone has taken off and is cruising! 🚀",
+        tag: "drone-delivery",
+      });
     }
     if (progress > 0.5 && progress < 0.6) {
       logStage(4, "Entering airspace quadrant Delta. Clear flight path.");
     }
     if (progress > 0.8 && progress < 0.88) {
       logStage(5, "Descent corridor established. Reducing speed to 12 km/h.");
+      showBrowserNotification("Flave Me Delivery", {
+        body: "Your delivery drone is descending for landing! 🛬",
+        tag: "drone-delivery",
+      });
     }
     if (progress > 0.96 && progress < 0.99) {
       logStage(6, "Target landing pad locked. Confirming release mechanics.");

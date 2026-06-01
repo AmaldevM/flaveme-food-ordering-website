@@ -476,13 +476,24 @@ export const Home = () => {
                       <span className="text-2xl font-extrabold text-white">₹{item.price}</span>
                     </div>
                     
-                    <button
-                      onClick={(e) => handleAddToCartDirectly(e, item)}
-                      className="px-5 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold rounded-xl shadow-md transition-all active:scale-[0.96] flex items-center gap-2 cursor-pointer"
-                    >
-                      <ShoppingCart className="w-4 h-4" />
-                      Add to Cart
-                    </button>
+                    <div className="flex gap-2">
+                      <Link
+                        to={`/ar-visualizer/${item._id}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="px-3 py-3 bg-white/5 hover:bg-white/10 text-amber-500 hover:text-amber-400 border border-white/10 font-bold rounded-xl transition-all active:scale-[0.96] flex items-center gap-1.5 cursor-pointer text-xs"
+                        title="View in Augmented Reality"
+                      >
+                        📱 AR
+                      </Link>
+
+                      <button
+                        onClick={(e) => handleAddToCartDirectly(e, item)}
+                        className="px-5 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold rounded-xl shadow-md transition-all active:scale-[0.96] flex items-center gap-2 cursor-pointer text-xs sm:text-sm"
+                      >
+                        <ShoppingCart className="w-4 h-4" />
+                        Add to Cart
+                      </button>
+                    </div>
                   </div>
                 </motion.div>
               ))}

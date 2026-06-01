@@ -60,6 +60,7 @@ const userSignup = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "User created successfully",
+      token: token,
       data: userResponse,
     });
   } catch (error) {
@@ -113,6 +114,7 @@ const userLogin = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "User login successfully",
+      token: token,
       data: {
         ...userExist._doc,
         password: undefined, // Hide password from response
@@ -309,6 +311,22 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
+const registerNotificationToken = async (req, res) => {
+  try {
+    const { token } = req.body;
+    console.log(`Received notification registration token: ${token}`);
+    res.status(200).json({
+      success: true,
+      message: "FCM registration token saved successfully",
+    });
+  } catch (error) {
+    console.error("Error registering notification token:", error);
+    res
+      .status(error.statusCode || 500)
+      .json({ success: false, message: error.message || "Internal server error" });
+  }
+};
+
 module.exports = {
   userSignup,
   userLogin,
@@ -318,4 +336,5 @@ module.exports = {
   deleteUser,
   updateUser,
   checkUser,
+  registerNotificationToken,
 };

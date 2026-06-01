@@ -8,6 +8,7 @@ const {
   deleteUser,
   updateUser,
   checkUser,
+  registerNotificationToken,
 } = require("../../controllers/userControllers");
 
 const { userAuth, optionalUserAuth } = require("../../middlewares/userAuth");
@@ -45,5 +46,8 @@ router.post("/chatbot", optionalUserAuth, chatbotResponse);
 // AI Recommendations endpoint
 const { getRecommendations } = require("../../controllers/recommendationsController");
 router.get("/recommendations", optionalUserAuth, getRecommendations);
+
+// Register Notifications Token endpoint
+router.post("/notifications/register-token", optionalUserAuth, registerNotificationToken);
 
 module.exports = { userRouter: router };

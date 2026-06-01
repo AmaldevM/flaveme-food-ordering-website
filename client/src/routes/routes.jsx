@@ -15,6 +15,7 @@ import ProfilePage from "@/pages/user/loginUser/ProfilePage.jsx";
 import Menus from "@/components/user/Menus.jsx";
 import { About } from "@/pages/user/About.jsx";
 import DroneTracking from "@/pages/user/loginUser/DroneTracking.jsx";
+import ARVisualizer from "@/pages/user/ARVisualizer.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { path: "", element: <Home /> },
+      { path: "ar-visualizer/:itemId", element: <ARVisualizer /> },
       { path: "signup", element: <Signup /> },
       { path: "login", element: <Login /> },
       { path: "rest", element: <RestaurantPage /> },

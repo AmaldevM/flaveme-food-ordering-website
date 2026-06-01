@@ -29,6 +29,7 @@
     "embla-carousel-autoplay": "^8.5.1",
     "embla-carousel-class-names": "^8.5.1",
     "embla-carousel-react": "^8.5.1",
+    "firebase": "^12.14.0",
     "framer-motion": "^11.12.0",
     "lucide-react": "^0.460.0",
     "next": "^15.0.3",

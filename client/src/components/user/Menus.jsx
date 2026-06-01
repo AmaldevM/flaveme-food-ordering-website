@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../../config/axiosInstance";
 import { SearchIcon } from "lucide-react";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const Menus = ({ restaurantId }) => {
   const [menus, setMenu] = useState([]);
@@ -102,12 +103,21 @@ const Menus = ({ restaurantId }) => {
                 <p className="text-xl font-bold text-purple-600 mb-4">{`$${menu.price.toFixed(
                   2
                 )}`}</p>
-                <button
-                  onClick={() => handleAddToCart(menu._id)}
-                  className="w-full py-2 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                >
-                  Add to Cart
-                </button>
+                <div className="flex gap-2">
+                  <Link
+                    to={`/ar-visualizer/${menu._id}`}
+                    className="px-3 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 font-bold border border-purple-200 rounded-lg transition-all text-xs flex items-center justify-center cursor-pointer"
+                    title="View in Augmented Reality"
+                  >
+                    📱 AR
+                  </Link>
+                  <button
+                    onClick={() => handleAddToCart(menu._id)}
+                    className="flex-1 py-2 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
               </div>
             </div>
           ))}
