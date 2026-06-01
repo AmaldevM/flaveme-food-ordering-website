@@ -52,4 +52,24 @@ const userAuth = async (req, res, next) => {
   }
 };
 
-module.exports = { userAuth };
+const optionalUserAuth = async (req, res, next) => {
+  try {
+    const { token } = req.cookies;
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY || process.env.USER_JWT_SECRET_KEY);
+      if (decoded) {
+        const user = await User.findById(decoded.id)
+          .select("-password")
+          .populate("address");
+        if (user) {
+          req.user = user;
+        }
+      }
+    }
+  } catch (error) {
+    // Ignore token errors and proceed as guest
+  }
+  next();
+};
+
+module.exports = { userAuth, optionalUserAuth };

@@ -5,6 +5,7 @@ import { Process } from "@/components/user/Process";
 import { Whychooseus } from "@/components/user/Whychooseus";
 import { RestaurantPage } from "./RestaurantPage";
 import { VirtualMenu } from "@/components/user/VirtualMenu";
+import AIRecommendations from "@/components/user/AIRecommendations";
 import Stats from "../../components/ui/Stats";
 import review from "../../assets/icons/review.png";
 import food from "../../assets/icons/food2.png";
@@ -80,6 +81,9 @@ export const Home = () => {
 
       {/* Main Core sections */}
       <div className="px-6 mx-auto max-w-screen-xl space-y-20">
+        {/* AI Recommendations */}
+        <AIRecommendations />
+
         {/* Restaurants listing */}
         <section id="restaurants">
           <RestaurantPage />

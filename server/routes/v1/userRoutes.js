@@ -10,7 +10,7 @@ const {
   checkUser,
 } = require("../../controllers/userControllers");
 
-const { userAuth } = require("../../middlewares/userAuth");
+const { userAuth, optionalUserAuth } = require("../../middlewares/userAuth");
 const { upload } = require("../../middlewares/multer");
 const router = express.Router();
 
@@ -37,5 +37,13 @@ router.get("/userlist", userAuth, getAllUsers);
 
 // Check user
 router.get("/checkUser", userAuth, checkUser);
+
+// AI Chatbot endpoint
+const { chatbotResponse } = require("../../controllers/chatbotController");
+router.post("/chatbot", optionalUserAuth, chatbotResponse);
+
+// AI Recommendations endpoint
+const { getRecommendations } = require("../../controllers/recommendationsController");
+router.get("/recommendations", optionalUserAuth, getRecommendations);
 
 module.exports = { userRouter: router };
