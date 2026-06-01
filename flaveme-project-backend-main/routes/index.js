@@ -1,8 +1,0 @@
-const express = require("express");
-const { v1Router } = require("./v1/index");
-const apiRouter = express.Router();
-require("dotenv").config();
-
-apiRouter.use("/v1", v1Router);
-
-module.exports = { apiRouter };
