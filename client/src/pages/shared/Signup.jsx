@@ -64,7 +64,14 @@ export const Signup = () => {
       }
     } catch (error) {
       console.error("Signup error:", error);
-      const errorMsg = error.response?.data?.message || "Registration failed. Please check details and try again.";
+      let errorMsg = "Registration failed. Please check details and try again.";
+      if (error.response?.data?.message) {
+        errorMsg = error.response.data.message;
+      } else if (error.message === "Network Error" || !error.response) {
+        errorMsg = "Cannot connect to the backend server. Please make sure the server is running on http://localhost:4000";
+      } else if (error.message) {
+        errorMsg = error.message;
+      }
       toast.error(errorMsg);
     } finally {
       setIsLoading(false);

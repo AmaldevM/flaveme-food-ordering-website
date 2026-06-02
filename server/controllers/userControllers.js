@@ -50,7 +50,7 @@ const userSignup = async (req, res) => {
     const userResponse = await User.findById(newUser._id).select("-password");
     //   authentication using jwt token
     const token = generateToken({ _id: newUser._id, role: "customer" });
-    //   send token as cookie
+    // send token as cookie
     const isProduction = process.env.NODE_ENV === "production";
     res.cookie("token", token, {
       httpOnly: true,
@@ -68,7 +68,7 @@ const userSignup = async (req, res) => {
     // send error response
     res
       .status(error.status || 500)
-      .json({ message: error.message || "Internal server error" });
+      .json({ success: false, message: error.message || "Internal server error" });
   }
 };
 
@@ -125,6 +125,7 @@ const userLogin = async (req, res) => {
   } catch (error) {
     console.error("Error during login:", error);
     res.status(error.status || 500).json({
+      success: false,
       message: error.message || "Internal server error",
     });
   }
@@ -148,7 +149,7 @@ const userLogout = async (req, res) => {
     console.error("Error clearing cookie:", error);
     res
       .status(error.status || 500)
-      .json({ message: error.message || "Internal server error" });
+      .json({ success: false, message: error.message || "Internal server error" });
   }
 };
 
@@ -178,7 +179,7 @@ const userProfile = async (req, res) => {
     console.error("Error fetching user profile: ", error);
     res
       .status(error.status || 500)
-      .json({ message: error.message || "Internal server error" });
+      .json({ success: false, message: error.message || "Internal server error" });
   }
 };
 
@@ -196,7 +197,7 @@ const checkUser = async (req, res, next) => {
     console.log(error);
     res
       .status(error.statusCode || 500)
-      .json({ message: error.message || "Internal server Error" });
+      .json({ success: false, message: error.message || "Internal server Error" });
   }
 };
 
@@ -244,7 +245,7 @@ const updateUser = async (req, res, next) => {
     console.log(error);
     res
       .status(error.statusCode || 500)
-      .json({ message: error.message || "Internal server Error" });
+      .json({ success: false, message: error.message || "Internal server Error" });
   }
 };
 
@@ -267,7 +268,7 @@ const getAllUsers = async (req, res, next) => {
     console.log(error);
     res
       .status(error.statusCode || 500)
-      .json({ message: error.message || "Internal server Error" });
+      .json({ success: false, message: error.message || "Internal server Error" });
   }
 };
 
