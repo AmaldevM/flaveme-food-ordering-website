@@ -77,8 +77,19 @@ export default function ARVisualizer() {
 
     injectScripts();
 
+    // Force transparency for body, html, and root elements during AR session
+    const arStyle = document.createElement("style");
+    arStyle.innerHTML = `
+      body, html, #root {
+        background-color: transparent !important;
+        background: transparent !important;
+      }
+    `;
+    document.head.appendChild(arStyle);
+
     // Cleanup function when leaving the AR page
     return () => {
+      arStyle.remove();
       // Stop webcam and release streams
       const videoElements = document.querySelectorAll("video");
       videoElements.forEach((vid) => {
@@ -207,7 +218,7 @@ export default function ARVisualizer() {
   };
 
   return (
-    <div className="fixed inset-0 z-40 bg-black font-montserrat flex flex-col justify-between overflow-hidden">
+    <div className="fixed inset-0 z-40 bg-transparent font-montserrat flex flex-col justify-between overflow-hidden">
       
       {/* 1. Loading screen while A-Frame resources initialize */}
       {loadingScripts && (
