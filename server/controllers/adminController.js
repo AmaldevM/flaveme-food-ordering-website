@@ -34,7 +34,7 @@ const adminSignup = async (req, res, next) => {
     res.json({ success: true, message: "Admin signed up successfully" });
   } catch (error) {
     console.error(error);
-    res.status(error.statusCode || 500).json({ message: "Internal server error" });
+    res.status(error.statusCode || 500).json({ success: false, message: error.message || "Internal server error" });
   }
 };
 
@@ -69,7 +69,7 @@ const adminLogin = async (req, res, next) => {
     res.status(200).json({ success: true, message: "Admin login successful" });
   } catch (error) {
     console.error(error);
-    res.status(error.statusCode || 500).json({ message: "Internal server error" });
+    res.status(error.statusCode || 500).json({ success: false, message: error.message || "Internal server error" });
   }
 };
 
