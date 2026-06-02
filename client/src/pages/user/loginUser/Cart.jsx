@@ -16,6 +16,7 @@ import {
   Sparkles,
   MapPin
 } from "lucide-react";
+import qrCodeImg from "../../../assets/qr_code.jpg";
 
 export const Cart = () => {
   const [cart, setCart] = useState(null);
@@ -467,12 +468,12 @@ export const Cart = () => {
                       <div className="bg-slate-900/50 p-4 border border-slate-800 rounded-2xl text-center space-y-4">
                         <span className="text-4xl block">📱</span>
                         <h4 className="text-xs font-bold text-gray-300">Scan QR or enter VPA address</h4>
-                        <div className="bg-white p-2 rounded-xl w-32 h-32 mx-auto flex items-center justify-center border-2 border-indigo-500">
-                          {/* QR Mock */}
-                          <div className="w-full h-full bg-slate-200 flex flex-col items-center justify-center text-[9px] text-slate-800 font-mono font-bold leading-tight">
-                            <span>UPI DISPATCH</span>
-                            <span>₹{finalPrice}</span>
-                          </div>
+                        <div className="bg-white p-1 rounded-xl w-36 h-36 mx-auto flex items-center justify-center border-2 border-indigo-500 overflow-hidden shadow-inner">
+                          <img 
+                            src={qrCodeImg} 
+                            alt="Payment QR Code" 
+                            className="w-full h-full object-contain"
+                          />
                         </div>
                         <input 
                           type="text" 
