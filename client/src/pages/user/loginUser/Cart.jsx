@@ -392,26 +392,39 @@ export const Cart = () => {
                   </div>
 
                   {/* Payment Gateway Toggle */}
-                  <div className="grid grid-cols-2 gap-3 mb-6 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
+                  <div className="grid grid-cols-3 gap-2 mb-6 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
                     <button
+                      type="button"
                       onClick={() => setPaymentMethod("stripe")}
-                      className={`py-2 rounded-lg font-bold text-xs transition-all ${
+                      className={`py-2 rounded-lg font-bold text-[10px] sm:text-xs transition-all ${
                         paymentMethod === "stripe" 
                           ? "bg-indigo-600 text-white border border-indigo-400/50" 
                           : "text-gray-400 hover:text-white"
                       }`}
                     >
-                      💳 Credit Card (Stripe)
+                      💳 Card
                     </button>
                     <button
+                      type="button"
                       onClick={() => setPaymentMethod("razorpay")}
-                      className={`py-2 rounded-lg font-bold text-xs transition-all ${
+                      className={`py-2 rounded-lg font-bold text-[10px] sm:text-xs transition-all ${
                         paymentMethod === "razorpay" 
                           ? "bg-indigo-600 text-white border border-indigo-400/50" 
                           : "text-gray-400 hover:text-white"
                       }`}
                     >
-                      📲 UPI / Net (Razorpay)
+                      📲 UPI QR
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("googlepay")}
+                      className={`py-2 rounded-lg font-bold text-[10px] sm:text-xs transition-all ${
+                        paymentMethod === "googlepay" 
+                          ? "bg-indigo-600 text-white border border-indigo-400/50" 
+                          : "text-gray-400 hover:text-white"
+                      }`}
+                    >
+                      🤖 G-Pay
                     </button>
                   </div>
 
@@ -464,7 +477,7 @@ export const Cart = () => {
                           />
                         </div>
                       </div>
-                    ) : (
+                    ) : paymentMethod === "razorpay" ? (
                       <div className="bg-slate-900/50 p-4 border border-slate-800 rounded-2xl text-center space-y-4">
                         <span className="text-4xl block">📱</span>
                         <h4 className="text-xs font-bold text-gray-300">Scan QR or enter VPA address</h4>
@@ -481,6 +494,31 @@ export const Cart = () => {
                           required
                           className="bg-slate-950 border border-slate-800 text-center text-white rounded-lg px-4 py-2 text-xs focus:outline-none focus:border-indigo-500 w-64" 
                         />
+                      </div>
+                    ) : (
+                      /* Google Pay Form */
+                      <div className="bg-slate-900/50 p-6 border border-slate-800 rounded-2xl text-center space-y-6">
+                        <div className="flex justify-center items-center gap-2">
+                          <span className="text-3xl">🤖</span>
+                          <span className="text-base font-black tracking-wider text-white">Google Pay</span>
+                        </div>
+                        <h4 className="text-xs font-bold text-gray-300">Enter Google Pay linked phone number or UPI VPA</h4>
+                        
+                        <div className="flex flex-col items-center gap-3">
+                          <div className="w-full max-w-xs flex flex-col text-left">
+                            <label className="text-[10px] text-gray-400 font-semibold uppercase mb-1">G-Pay Mobile Number / UPI ID</label>
+                            <input 
+                              type="text" 
+                              placeholder="9876543210@okaxis" 
+                              required
+                              className="bg-slate-950 border border-slate-800 text-white rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-indigo-500" 
+                            />
+                          </div>
+                        </div>
+
+                        <div className="bg-black text-white p-3 rounded-xl border border-gray-800 flex items-center justify-center gap-2 max-w-xs mx-auto text-xs font-bold pointer-events-none opacity-85">
+                          <span className="text-base">🌐</span> Securely linking Google Pay session
+                        </div>
                       </div>
                     )}
 
@@ -520,7 +558,7 @@ export const Cart = () => {
                     <div className="space-y-1 text-[9px] text-slate-600 mb-3">
                       <p><b>Order ID:</b> {createdOrder?._id}</p>
                       <p><b>Date:</b> {new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}</p>
-                      <p><b>Payment Ref:</b> STRIPE_SIM_{Math.random().toString(36).substring(2, 9).toUpperCase()}</p>
+                      <p><b>Payment Ref:</b> {paymentMethod.toUpperCase()}_SIM_{Math.random().toString(36).substring(2, 9).toUpperCase()}</p>
                     </div>
 
                     <div className="border-b border-dashed border-slate-300 pb-2 mb-2 font-bold flex justify-between text-[10px]">

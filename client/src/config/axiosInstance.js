@@ -21,3 +21,21 @@ axiosInstance.interceptors.request.use(
         return Promise.reject(error);
     }
 );
+
+axiosInstance.interceptors.response.use(
+    (response) => {
+        const url = response.config.url;
+        if (url && (
+            url.includes("/cart/addCart") || 
+            url.includes("/cart/removeitem") || 
+            url.includes("/cart/updateCart") || 
+            url.includes("/order/createOrder")
+        )) {
+            window.dispatchEvent(new Event("cartUpdated"));
+        }
+        return response;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);

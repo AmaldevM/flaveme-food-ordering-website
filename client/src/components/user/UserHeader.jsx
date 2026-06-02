@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Menu, X, ShoppingCart, Heart, LogOut, User as UserIcon } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "../../assets/logo.png";
@@ -12,6 +12,34 @@ export const UserHeader = () => {
   const userId = localStorage.getItem("userId") || "";
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      const token = localStorage.getItem("token") || localStorage.getItem("authToken");
+      if (!token) return;
+      try {
+        const response = await axiosInstance.get("/cart/getCart");
+        if (response.data && response.data.items) {
+          const totalQty = response.data.items.reduce((acc, curr) => acc + curr.quantity, 0);
+          setCartCount(totalQty);
+        } else {
+          setCartCount(0);
+        }
+      } catch (error) {
+        console.error("Error fetching cart count:", error);
+        if (error.response?.status === 404) {
+          setCartCount(0);
+        }
+      }
+    };
+
+    fetchCartCount();
+
+    window.addEventListener("cartUpdated", fetchCartCount);
+    return () => window.removeEventListener("cartUpdated", fetchCartCount);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -89,7 +117,7 @@ export const UserHeader = () => {
             
             <Link
               to="/cart"
-              className={`p-2.5 rounded-full transition-all duration-300 hover:bg-white/10 dark:hover:bg-white/5 hover:rotate-[8deg] active:scale-95 ${
+              className={`relative p-2.5 rounded-full transition-all duration-300 hover:bg-white/10 dark:hover:bg-white/5 hover:rotate-[8deg] active:scale-95 ${
                 location.pathname === "/cart"
                   ? "text-amber-500 bg-white/10 dark:bg-white/5"
                   : "text-gray-700 dark:text-gray-200 hover:text-amber-500"
@@ -97,6 +125,11 @@ export const UserHeader = () => {
               title="Cart"
             >
               <ShoppingCart className="w-5 h-5" />
+              {cartCount > 0 && (
+                <span className="absolute top-1 right-1 bg-amber-500 text-black text-[9px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center border border-black shadow-md shadow-orange-500/30">
+                  {cartCount}
+                </span>
+              )}
             </Link>
             
             <ThemeToggle />
@@ -160,10 +193,17 @@ export const UserHeader = () => {
             <Link
               to="/cart"
               onClick={() => setIsMenuOpen(false)}
-              className="py-2.5 px-4 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-white/10 hover:text-amber-500 flex items-center gap-2 transition-all"
+              className="py-2.5 px-4 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-white/10 hover:text-amber-500 flex items-center justify-between transition-all"
             >
-              <ShoppingCart className="w-5 h-5" />
-              Cart
+              <div className="flex items-center gap-2">
+                <ShoppingCart className="w-5 h-5" />
+                <span>Cart</span>
+              </div>
+              {cartCount > 0 && (
+                <span className="bg-amber-500 text-black text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </Link>
             <Link
               to={`/user/profile/${userId}`}
