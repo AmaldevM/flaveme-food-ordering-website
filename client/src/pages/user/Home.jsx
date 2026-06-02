@@ -5,7 +5,8 @@ import { axiosInstance } from "../../config/axiosInstance";
 import toast from "react-hot-toast";
 import { 
   ArrowRight, ShieldCheck, Truck, Sparkles, Star, MapPin, 
-  Smile, ShoppingCart, KeyRound, UserPlus, Info, CheckCircle2 
+  Smile, ShoppingCart, KeyRound, UserPlus, Info, CheckCircle2,
+  Flame, TrendingUp, Clock, Brain, RefreshCw, Award
 } from "lucide-react";
 import { HowDoesitWork } from "@/components/user/HowDoesitWork";
 import { Whychooseus } from "@/components/user/Whychooseus";
@@ -84,6 +85,69 @@ export const Home = () => {
   // Verification Modal State
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [selectedFoodItem, setSelectedFoodItem] = useState(null);
+
+  // AI taste curation matching states
+  const [aiSeeds, setAiSeeds] = useState([1, 13, 22, 33, 44, 55]);
+  const [isAiSpinning, setIsAiSpinning] = useState(false);
+
+  const regenerateAIRecommendations = () => {
+    if (menuItems.length > 6) {
+      setIsAiSpinning(true);
+      setTimeout(() => {
+        const indices = [];
+        while (indices.length < 6) {
+          const rand = Math.floor(Math.random() * menuItems.length);
+          if (!indices.includes(rand)) indices.push(rand);
+        }
+        setAiSeeds(indices);
+        setIsAiSpinning(false);
+        toast.success("AI recalculating your taste matching profiles!", {
+          icon: "🤖",
+          style: {
+            background: "#1e1b4b",
+            color: "#f59e0b",
+            border: "1px solid rgba(245, 158, 11, 0.3)"
+          }
+        });
+      }, 600);
+    } else {
+      toast.error("Not enough items in catalog to recalculate AI matching!");
+    }
+  };
+
+  // Safe curation retrieval helper functions to prevent frontend crashes
+  const getTodaysSpecials = () => {
+    const list = menuItems.filter(item => 
+      ["Chicken Biryani", "Cheese Burst Pizza", "Kunafa", "Porotta & Beef Curry", "Dragon Chicken", "Alfaham Mandi"].includes(item.name)
+    );
+    return list.length > 0 ? list : menuItems.slice(0, 4);
+  };
+
+  const getPopularItems = () => {
+    const list = menuItems.filter(item => 
+      ["Zinger Burger", "Pepperoni Pizza", "Crispy Fried Chicken", "Pani Puri", "Club Sandwich", "Malabar Chicken Curry", "French Fries"].includes(item.name)
+    );
+    return list.length > 0 ? list : menuItems.slice(2, 8);
+  };
+
+  const getTopRatedItems = () => {
+    const list = menuItems.filter(item => 
+      item.price > 250 || ["Chocolate Cake", "Brownie with Ice Cream", "Alfaham Mandi", "Fish Pollichathu"].includes(item.name)
+    );
+    return list.length > 0 ? list : menuItems.slice(1, 7);
+  };
+
+  const getAIRecommendedItems = () => {
+    if (menuItems.length <= 6) return menuItems;
+    return aiSeeds.map(idx => menuItems[idx]).filter(Boolean);
+  };
+
+  const getTrendingItems = () => {
+    const list = menuItems.filter(item => 
+      ["Shawarma", "Chicken Noodles", "Fresh Lime Juice", "Momos", "Hot & Spicy Chicken", "Fried Rice"].includes(item.name)
+    );
+    return list.length > 0 ? list : menuItems.slice(3, 8);
+  };
   
   const navigate = useNavigate();
   const token = localStorage.getItem("token") || localStorage.getItem("authToken");
@@ -315,6 +379,315 @@ export const Home = () => {
               </div>
             </motion.div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Curated Cuisines Hub */}
+      <section className="max-w-screen-xl mx-auto px-6 space-y-20 relative">
+        {/* Decorative background glows */}
+        <div className="absolute top-1/4 left-10 w-72 h-72 bg-amber-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+        <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-orange-600/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+        {/* SECTION A: Today's Specials */}
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <p className="text-sm font-extrabold text-amber-500 tracking-widest uppercase flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+                Handpicked Culinary Art
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-montserrat">
+                Today's <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Chef Specials</span>
+              </h2>
+            </div>
+            <div className="text-gray-400 text-sm font-medium">Swipe to explore →</div>
+          </div>
+
+          <div className="flex gap-6 overflow-x-auto pb-4 pt-2 no-scrollbar scroll-smooth snap-x snap-mandatory">
+            {getTodaysSpecials().map((item) => (
+              <motion.div
+                key={`special-${item._id}`}
+                whileHover={{ y: -6 }}
+                onClick={() => handleItemClick(item)}
+                className="w-80 shrink-0 snap-start bg-white/5 border border-white/10 rounded-3xl p-4 cursor-pointer relative overflow-hidden group glass-card-hover"
+              >
+                {/* Chef Special Ribbon */}
+                <div className="absolute top-6 left-6 z-10 bg-amber-500 text-black text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+                  Chef Choice
+                </div>
+
+                <div className="h-44 w-full overflow-hidden rounded-2xl relative">
+                  <img
+                    src={item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&h=450&q=80"}
+                    alt={item.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <span className="absolute bottom-3 right-3 bg-amber-500/95 text-black font-extrabold px-2.5 py-1 rounded-xl text-xs">
+                    ₹{item.price}
+                  </span>
+                </div>
+
+                <div className="mt-4 space-y-2">
+                  <h4 className="text-lg font-bold text-white line-clamp-1 group-hover:text-amber-400 transition-colors font-montserrat">
+                    {item.name}
+                  </h4>
+                  <p className="text-gray-400 text-xs line-clamp-2 leading-relaxed">
+                    {item.description || "Handcrafted fresh ingredients made daily by master culinary chefs."}
+                  </p>
+                  <div className="flex items-center justify-between pt-2">
+                    <span className="text-gray-400 text-[11px] font-medium flex items-center gap-1">
+                      <Star className="w-3.5 h-3.5 fill-amber-400 text-transparent" />
+                      {item.rating || "4.9"}
+                    </span>
+                    <button
+                      onClick={(e) => handleAddToCartDirectly(e, item)}
+                      className="px-3 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-extrabold text-[11px] rounded-xl flex items-center gap-1 cursor-pointer active:scale-95"
+                    >
+                      <ShoppingCart className="w-3.5 h-3.5" /> Add
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* SECTION B: AI Recommendations */}
+        <div className="space-y-6 bg-gradient-to-br from-indigo-950/20 to-orange-950/20 border border-white/10 rounded-[36px] p-8 backdrop-blur-xl relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+          
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+            <div>
+              <p className="text-sm font-extrabold text-amber-500 tracking-widest uppercase flex items-center gap-1.5">
+                <Brain className="w-4 h-4 text-amber-400 animate-bounce" />
+                Hyper-personalized taste profiles
+              </p>
+              <h2 className="text-3xl font-extrabold text-white font-montserrat">
+                AI Match <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">For You</span>
+              </h2>
+            </div>
+            
+            <button
+              onClick={regenerateAIRecommendations}
+              disabled={isAiSpinning}
+              className="px-5 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-extrabold text-xs sm:text-sm rounded-2xl flex items-center gap-2 cursor-pointer transition-all active:scale-95 shrink-0"
+            >
+              <RefreshCw className={`w-4 h-4 text-amber-500 ${isAiSpinning ? "animate-spin" : ""}`} />
+              Recalculate AI Matches
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-4 relative z-10">
+            {getAIRecommendedItems().slice(0, 3).map((item, index) => {
+              const matchScores = ["99% Match", "96% Match", "94% Match"];
+              return (
+                <motion.div
+                  key={`ai-${item._id}`}
+                  whileHover={{ scale: 1.02 }}
+                  onClick={() => handleItemClick(item)}
+                  className="bg-white/5 border border-white/10 rounded-3xl p-5 cursor-pointer relative group flex flex-col justify-between glass-card-hover"
+                >
+                  <div className="absolute top-4 right-4 z-10 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                    {matchScores[index] || "92% Match"}
+                  </div>
+
+                  <div className="flex gap-4 items-center">
+                    <img
+                      src={item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&h=450&q=80"}
+                      alt={item.name}
+                      className="w-20 h-20 object-cover rounded-2xl shrink-0 border border-white/10"
+                    />
+                    <div className="space-y-1 min-w-0">
+                      <h4 className="text-base font-bold text-white line-clamp-1 group-hover:text-amber-400 transition-colors font-montserrat">
+                        {item.name}
+                      </h4>
+                      <p className="text-gray-400 text-xs line-clamp-2 leading-relaxed">
+                        {item.description || "Handcrafted fresh ingredients made daily by master culinary chefs."}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-4 mt-4 border-t border-white/5">
+                    <div>
+                      <span className="text-[10px] text-gray-400 block">AI Choice</span>
+                      <span className="text-lg font-extrabold text-white">₹{item.price}</span>
+                    </div>
+                    <button
+                      onClick={(e) => handleAddToCartDirectly(e, item)}
+                      className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-extrabold text-xs rounded-xl flex items-center gap-1 cursor-pointer active:scale-95"
+                    >
+                      <ShoppingCart className="w-3.5 h-3.5" /> Buy
+                    </button>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* SECTION C: Popular Near You */}
+        <div className="space-y-6">
+          <div>
+            <p className="text-sm font-extrabold text-amber-500 tracking-widest uppercase flex items-center gap-1.5">
+              <Clock className="w-4 h-4 text-amber-400" />
+              Fastest Autonomous Drone Deliveries
+            </p>
+            <h2 className="text-3xl font-extrabold text-white font-montserrat">
+              Popular <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Near You</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {getPopularItems().map((item, idx) => {
+              const deliveryTimes = ["12-15 min", "15-18 min", "10-12 min", "18-20 min", "14-16 min", "11-13 min"];
+              const distances = ["1.2 km", "2.1 km", "0.8 km", "3.4 km", "1.9 km", "1.1 km"];
+              return (
+                <motion.div
+                  key={`popular-${item._id}`}
+                  whileHover={{ y: -5 }}
+                  onClick={() => handleItemClick(item)}
+                  className="bg-white/5 border border-white/10 rounded-3xl p-5 cursor-pointer relative group flex flex-col justify-between glass-card-hover"
+                >
+                  <div>
+                    <div className="relative h-44 w-full overflow-hidden rounded-2xl">
+                      <img
+                        src={item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&h=450&q=80"}
+                        alt={item.name}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      {/* Popular Tag */}
+                      <span className="absolute top-3 left-3 bg-orange-600/90 text-white border border-white/10 font-bold px-3 py-1 rounded-full text-[10px] uppercase tracking-wider flex items-center gap-1">
+                        <Flame className="w-3 h-3 fill-white text-transparent animate-bounce" /> Hot
+                      </span>
+                    </div>
+
+                    <div className="mt-4 space-y-2">
+                      <div className="flex justify-between items-start gap-2">
+                        <h4 className="text-lg font-bold text-white line-clamp-1 group-hover:text-amber-400 transition-colors font-montserrat">
+                          {item.name}
+                        </h4>
+                        <span className="bg-amber-500/10 text-amber-500 text-xs px-2 py-0.5 rounded-full font-bold">
+                          ★ {item.rating || "4.8"}
+                        </span>
+                      </div>
+                      <p className="text-gray-400 text-xs line-clamp-2 leading-relaxed font-medium">
+                        {item.description || "Handcrafted fresh ingredients made daily by master culinary chefs."}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-gray-400">
+                    <div className="flex items-center gap-1 font-semibold">
+                      <Truck className="w-3.5 h-3.5 text-amber-500" />
+                      <span>{deliveryTimes[idx % 6]}</span>
+                      <span className="text-gray-600">•</span>
+                      <span>{distances[idx % 6]}</span>
+                    </div>
+                    <div className="text-right flex items-center gap-3">
+                      <span className="text-white font-extrabold text-base">₹{item.price}</span>
+                      <button
+                        onClick={(e) => handleAddToCartDirectly(e, item)}
+                        className="p-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl cursor-pointer active:scale-95"
+                      >
+                        <ShoppingCart className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* SECTION D: Trending & Top Rated */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Trending This Week */}
+          <div className="space-y-6 bg-white/5 border border-white/10 rounded-[32px] p-6 sm:p-8 relative overflow-hidden shadow-xl">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-amber-400" />
+              <h3 className="text-2xl font-extrabold text-white font-montserrat">
+                Trending <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">This Week</span>
+              </h3>
+            </div>
+            
+            <div className="space-y-4">
+              {getTrendingItems().slice(0, 5).map((item, index) => (
+                <div
+                  key={`trending-${item._id}`}
+                  onClick={() => handleItemClick(item)}
+                  className="flex items-center gap-4 p-3 bg-white/0 hover:bg-white/5 border border-transparent hover:border-white/5 rounded-2xl cursor-pointer group transition-all"
+                >
+                  <span className="text-2xl sm:text-3xl font-extrabold text-white/20 group-hover:text-amber-500/40 w-10 shrink-0 text-center font-montserrat">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <img
+                    src={item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&h=450&q=80"}
+                    alt={item.name}
+                    className="w-14 h-14 object-cover rounded-xl shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <h4 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-1 font-montserrat font-semibold">
+                      {item.name}
+                    </h4>
+                    <span className="text-xs text-gray-400 font-semibold">₹{item.price}</span>
+                  </div>
+                  <button
+                    onClick={(e) => handleAddToCartDirectly(e, item)}
+                    className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white text-xs font-bold rounded-lg border border-white/15 cursor-pointer active:scale-95"
+                  >
+                    + Add
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Top Rated Specialties */}
+          <div className="space-y-6 bg-white/5 border border-white/10 rounded-[32px] p-6 sm:p-8 relative overflow-hidden shadow-xl">
+            <div className="flex items-center gap-2">
+              <Award className="w-5 h-5 text-amber-400" />
+              <h3 className="text-2xl font-extrabold text-white font-montserrat">
+                Top Rated <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Specialties</span>
+              </h3>
+            </div>
+
+            <div className="space-y-4">
+              {getTopRatedItems().slice(0, 5).map((item) => (
+                <div
+                  key={`top-${item._id}`}
+                  onClick={() => handleItemClick(item)}
+                  className="flex items-center gap-4 p-3 bg-white/0 hover:bg-white/5 border border-transparent hover:border-white/5 rounded-2xl cursor-pointer group transition-all"
+                >
+                  <img
+                    src={item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&h=450&q=80"}
+                    alt={item.name}
+                    className="w-14 h-14 object-cover rounded-xl shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <h4 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-1 font-montserrat font-semibold">
+                      {item.name}
+                    </h4>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs text-amber-400 font-bold flex items-center gap-0.5">
+                        ★ {item.rating || "4.9"}
+                      </span>
+                      <span className="text-[10px] text-gray-400 font-bold">({Math.floor(Math.random() * 50 + 20)} reviews)</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-sm font-extrabold text-white block">₹{item.price}</span>
+                    <button
+                      onClick={(e) => handleAddToCartDirectly(e, item)}
+                      className="text-xs text-amber-500 hover:text-amber-400 font-bold mt-1 cursor-pointer"
+                    >
+                      + Add to Cart
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
