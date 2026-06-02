@@ -1,8 +1,13 @@
 const jwt = require("jsonwebtoken");
 const sellerAuth = (req, res, next) => {
   try {
-    // Get token form req.cookies
-    const { token } = req.cookies;
+    // Retrieve token from cookies or Authorization header
+    let token = req.cookies.token;
+    if (!token && req.headers.authorization) {
+      const authHeader = req.headers.authorization;
+      token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : authHeader;
+    }
+
     // Check have any token
     if (!token) {
       return res.status(401).json({

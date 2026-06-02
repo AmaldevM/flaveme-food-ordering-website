@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Add.css';
-import axios from 'axios';
+import { axiosInstance } from '../../config/axiosInstance';
 import { toast } from 'react-toastify';
 import upload_area from '../../assets/upload_area.png';
 
@@ -19,7 +19,7 @@ const Add = ({ url }) => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const response = await axios.get(`${url}/api/v1/rest/restaurants`);
+        const response = await axiosInstance.get('/rest/restaurants');
         if (response.data && response.data.length > 0) {
           setRestaurants(response.data);
           // Set first restaurant as default
@@ -61,7 +61,7 @@ const Add = ({ url }) => {
     formData.append("image", image);
 
     try {
-      const response = await axios.post(`${url}/api/v1/menu/create-menu`, formData);
+      const response = await axiosInstance.post('/menu/create-menu', formData);
       if (response.data.success) {
         setData({
           restaurantId: restaurants.length > 0 ? restaurants[0]._id : "",

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './List.css';
-import axios from 'axios';
+import { axiosInstance } from '../../config/axiosInstance';
 import { toast } from 'react-toastify';
 
 const List = ({ url }) => {
@@ -22,7 +22,7 @@ const List = ({ url }) => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const response = await axios.get(`${url}/api/v1/rest/restaurants`);
+        const response = await axiosInstance.get('/rest/restaurants');
         if (response.data && response.data.length > 0) {
           setRestaurants(response.data);
           setSelectedRestId(response.data[0]._id);
@@ -39,7 +39,7 @@ const List = ({ url }) => {
   const fetchList = async (restaurantId) => {
     if (!restaurantId) return;
     try {
-      const response = await axios.get(`${url}/api/v1/menu/menu/${restaurantId}`);
+      const response = await axiosInstance.get(`/menu/menu/${restaurantId}`);
       if (response.data.success) {
         setList(response.data.menus);
       } else {
@@ -62,7 +62,7 @@ const List = ({ url }) => {
 
   const removeFood = async (foodId) => {
     try {
-      const response = await axios.delete(`${url}/api/v1/menu/remove-menu/${foodId}`);
+      const response = await axiosInstance.delete(`/menu/remove-menu/${foodId}`);
       if (response.data.success) {
         toast.success(response.data.message);
         // Refresh the list
@@ -103,7 +103,7 @@ const List = ({ url }) => {
     }
 
     try {
-      const response = await axios.put(`${url}/api/v1/menu/update-menu/${currentItem._id}`, formData, {
+      const response = await axiosInstance.put(`/menu/update-menu/${currentItem._id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Orders.css';
-import axios from 'axios';
+import { axiosInstance } from '../../config/axiosInstance';
 import { toast } from 'react-toastify';
 import parcel_icon from '../../assets/parcel_icon.png';
 
@@ -10,7 +10,7 @@ const Orders = ({ url }) => {
   // Fetch all orders
   const fetchAllOrders = async () => {
     try {
-      const response = await axios.get(`${url}/api/v1/order/all-orders`);
+      const response = await axiosInstance.get('/order/all-orders');
       if (response.data.success) {
         // Sort orders so newest are on top
         const sortedOrders = response.data.orders.reverse();
@@ -27,7 +27,7 @@ const Orders = ({ url }) => {
   const statusHandler = async (event, orderId) => {
     const newStatus = event.target.value;
     try {
-      const response = await axios.put(`${url}/api/v1/order/order/${orderId}/status`, {
+      const response = await axiosInstance.put(`/order/order/${orderId}/status`, {
         status: newStatus
       });
       if (response.data.success) {

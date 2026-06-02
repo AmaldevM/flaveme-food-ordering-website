@@ -2,8 +2,12 @@ const jwt = require("jsonwebtoken");
 
 const adminAuth = (req, res, next) => {
   try {
-    // Get token from cookies
-    const { token } = req.cookies;
+    // Retrieve token from cookies or Authorization header
+    let token = req.cookies.token;
+    if (!token && req.headers.authorization) {
+      const authHeader = req.headers.authorization;
+      token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : authHeader;
+    }
 
     if (!token) {
       return res.status(401).json({

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
-import axios from "axios";
+import { axiosInstance } from "../../config/axiosInstance";
 import { toast } from "react-toastify";
 
 const Dashboard = ({ url }) => {
@@ -22,22 +22,22 @@ const Dashboard = ({ url }) => {
     try {
       setLoading(true);
       // Fetch platform stats
-      const statsRes = await axios.get(`${url}/api/v1/adminAnalytics/platform-stats`);
+      const statsRes = await axiosInstance.get('/adminAnalytics/platform-stats');
       if (statsRes.data) {
         setStats(statsRes.data);
       }
 
       // Fetch chart data
-      const chartRes = await axios.get(`${url}/api/v1/adminAnalytics/orders-by-restaurant`);
+      const chartRes = await axiosInstance.get('/adminAnalytics/orders-by-restaurant');
       if (chartRes.data) {
         setChartData(chartRes.data);
       }
 
       // Fetch menus from a default restaurant to find low stock / inactive items
-      const restRes = await axios.get(`${url}/api/v1/rest/restaurants`);
+      const restRes = await axiosInstance.get('/rest/restaurants');
       if (restRes.data && restRes.data.length > 0) {
         const firstRestId = restRes.data[0]._id;
-        const menuRes = await axios.get(`${url}/api/v1/menu/menu/${firstRestId}`);
+        const menuRes = await axiosInstance.get(`/menu/menu/${firstRestId}`);
         if (menuRes.data?.menus) {
           const outOfStock = menuRes.data.menus.filter(item => !item.availability);
           setInventoryAlerts(outOfStock.slice(0, 4));

@@ -24,10 +24,11 @@ const adminSignup = async (req, res, next) => {
     await newUser.save();
 
     const token = generateToken({ _id: newUser._id, role: "admin" });
+    const isProduction = process.env.NODE_ENV === "production";
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
     });
 
     res.json({ success: true, message: "Admin signed up successfully" });
@@ -58,10 +59,11 @@ const adminLogin = async (req, res, next) => {
 
     const token = generateToken({ _id: adminExist._id, role: adminExist.role || "admin" });
     console.log("object", token);
+    const isProduction = process.env.NODE_ENV === "production";
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
     });
     
     res.status(200).json({ success: true, message: "Admin login successful" });
@@ -74,11 +76,12 @@ const adminLogin = async (req, res, next) => {
 // adminLogout
 const adminLogout = async (req, res, next) => {
   try {
+    const isProduction = process.env.NODE_ENV === "production";
     res.cookie("token", "", {
       expires: new Date(0),
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
     });
     res.status(200).json({ success: true, message: "Admin successfully logged out" });
   } catch (error) {

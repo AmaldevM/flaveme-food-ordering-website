@@ -3,8 +3,13 @@ const { User } = require("../models/userModel");
 
 const userAuth = async (req, res, next) => {
   try {
-    // Destructure token from cookies
-    const { token } = req.cookies;
+    // Retrieve token from cookies or Authorization header
+    let token = req.cookies.token;
+    if (!token && req.headers.authorization) {
+      const authHeader = req.headers.authorization;
+      token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : authHeader;
+    }
+
     // Check if token exists
     if (!token) {
       return res.status(401).json({
@@ -54,7 +59,11 @@ const userAuth = async (req, res, next) => {
 
 const optionalUserAuth = async (req, res, next) => {
   try {
-    const { token } = req.cookies;
+    let token = req.cookies.token;
+    if (!token && req.headers.authorization) {
+      const authHeader = req.headers.authorization;
+      token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : authHeader;
+    }
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY || process.env.USER_JWT_SECRET_KEY);
       if (decoded) {

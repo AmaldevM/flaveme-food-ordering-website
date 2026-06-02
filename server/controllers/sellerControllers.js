@@ -34,10 +34,11 @@ const registerSeller = async (req, res) => {
     });
 
     // Set cookie with token
+    const isProduction = process.env.NODE_ENV === "production";
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
     });
 
     res
@@ -82,10 +83,11 @@ const loginSeller = async (req, res) => {
     });
 
     // Set cookie with token
+    const isProduction = process.env.NODE_ENV === "production";
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 1 * 60 * 60 * 1000, // 1 hour
     });
 
@@ -98,11 +100,12 @@ const loginSeller = async (req, res) => {
 // Seller Logout
 const logoutSeller = (req, res) => {
   try {
+    const isProduction = process.env.NODE_ENV === "production";
     res.cookie("token", "", {
       expires: new Date(0),
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
     });
     res.status(200).json({ success: true, message: "Seller logged out" });
   } catch (error) {
