@@ -14,7 +14,7 @@ const List = ({ url }) => {
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editPrice, setEditPrice] = useState("");
-  const [editCategory, setEditCategory] = useState("Burgers");
+  const [editCategory, setEditCategory] = useState("Biryani & Rice");
   const [editImage, setEditImage] = useState(null);
   const [editImagePreview, setEditImagePreview] = useState("");
 
@@ -85,7 +85,7 @@ const List = ({ url }) => {
     setEditName(item.name);
     setEditDescription(item.description || "");
     setEditPrice(item.price);
-    setEditCategory(item.category || "Burgers");
+    setEditCategory(item.category || "Biryani & Rice");
     setEditImage(null);
     setEditImagePreview(item.image || "");
     setIsEditModalOpen(true);
@@ -203,11 +203,17 @@ const List = ({ url }) => {
               <div className="form-group">
                 <label>Category</label>
                 <select value={editCategory} onChange={(e) => setEditCategory(e.target.value)}>
-                  <option value="Burgers">Burgers</option>
+                  <option value="Biryani & Rice">Biryani & Rice</option>
+                  <option value="Fast Food">Fast Food</option>
                   <option value="Pizzas">Pizzas</option>
-                  <option value="Donuts">Donuts</option>
-                  <option value="Drinks">Drinks</option>
+                  <option value="Fried Chicken">Fried Chicken</option>
+                  <option value="Kerala Specials">Kerala Specials</option>
+                  <option value="Chinese">Chinese</option>
+                  <option value="Street Food">Street Food</option>
+                  <option value="Healthy">Healthy</option>
                   <option value="Desserts">Desserts</option>
+                  <option value="Beverages">Beverages</option>
+                  <option value="Café">Café</option>
                 </select>
               </div>
               <div className="form-group">

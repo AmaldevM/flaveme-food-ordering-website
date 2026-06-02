@@ -123,7 +123,20 @@ export const Home = () => {
   }, []);
 
   // Categories list
-  const categories = ["All", "Burgers", "Pizzas", "Donuts", "Drinks", "Desserts"];
+  const categories = [
+    "All",
+    "Biryani & Rice",
+    "Fast Food",
+    "Pizzas",
+    "Fried Chicken",
+    "Kerala Specials",
+    "Chinese",
+    "Street Food",
+    "Healthy",
+    "Desserts",
+    "Beverages",
+    "Café"
+  ];
 
   // Filter logic
   const filteredItems = activeCategory === "All" 

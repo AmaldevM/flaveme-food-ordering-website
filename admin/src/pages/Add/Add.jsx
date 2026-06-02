@@ -12,7 +12,7 @@ const Add = ({ url }) => {
     name: "",
     description: "",
     price: "",
-    category: "Salad"
+    category: "Biryani & Rice"
   });
 
   // Fetch all restaurants for the dropdown selection
@@ -68,7 +68,7 @@ const Add = ({ url }) => {
           name: "",
           description: "",
           price: "",
-          category: "Salad"
+          category: "Biryani & Rice"
         });
         setImage(false);
         toast.success(response.data.message);
@@ -115,14 +115,17 @@ const Add = ({ url }) => {
           <div className="add-category flex-col">
             <p>Product Category</p>
             <select onChange={onChangeHandler} name="category" value={data.category}>
-              <option value="Salad">Salad</option>
-              <option value="Rolls">Rolls</option>
-              <option value="Deserts">Deserts</option>
-              <option value="Sandwich">Sandwich</option>
-              <option value="Cake">Cake</option>
-              <option value="Pure Veg">Pure Veg</option>
-              <option value="Pasta">Pasta</option>
-              <option value="Noodles">Noodles</option>
+              <option value="Biryani & Rice">Biryani & Rice</option>
+              <option value="Fast Food">Fast Food</option>
+              <option value="Pizzas">Pizzas</option>
+              <option value="Fried Chicken">Fried Chicken</option>
+              <option value="Kerala Specials">Kerala Specials</option>
+              <option value="Chinese">Chinese</option>
+              <option value="Street Food">Street Food</option>
+              <option value="Healthy">Healthy</option>
+              <option value="Desserts">Desserts</option>
+              <option value="Beverages">Beverages</option>
+              <option value="Café">Café</option>
             </select>
           </div>
           <div className="add-price flex-col">
